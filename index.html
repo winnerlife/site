@@ -51,7 +51,7 @@
     const user = JSON.parse(localStorage.getItem('user'));
     if(user && user.name) {
       document.getElementById('usernameDisplay').textContent = user.name;
-      document.getElementById('profileImage').src = user.profileImage || "https://cdn-icons-png.flaticon.com/512/10337/10337609.png";
+      document.getElementById('profileImage').src = user.profileImage || "10337609.png";
     } else {
       // If no user is logged in, redirect to the login page.
       window.location.href = "login.html";
