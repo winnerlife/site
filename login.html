@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exam Study Tracker - Login</title>
+  <!-- Link to your neon-themed CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Optional Bootstrap for layout if desired -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Additional styling for the login page */
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    .profile-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border: 2px solid #00f5ff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Shooting Stars for the neon background -->
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+
+  <div class="container">
+    <div class="login-container text-center">
+      <h2 class="mb-4 subject-title">Login</h2>
+      <!-- Profile preview image (default or from URL input) -->
+      <img src="https://cdn-icons-png.flaticon.com/512/10337/10337609.png" alt="Profile Preview" class="profile-preview" id="profilePreview">
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Enter your name" id="username" required>
+        </div>
+        <div class="form-group">
+          <input type="url" class="form-control" placeholder="Profile Image URL (optional)" id="profileImage">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // When the user types in the Profile Image URL field, update the preview image.
+    const profileImageInput = document.getElementById('profileImage');
+    const profilePreview = document.getElementById('profilePreview');
+
+    profileImageInput.addEventListener('input', function() {
+      const url = this.value;
+      if(url) {
+        profilePreview.src = url;
+      } else {
+        profilePreview.src = "https://cdn-icons-png.flaticon.com/512/10337/10337609.png";
+      }
+    });
+
+    // Handle form submission: store the user data and redirect to home.
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const profileImage = document.getElementById('profileImage').value.trim() || "default-profile.png";
+      if(username) {
+        const user = {
+          name: username,
+          profileImage: profileImage
+        };
+        localStorage.setItem('user', JSON.stringify(user));
+        // Redirect to the home page
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+  <style>
+    /* Import the Poppins font from Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  
+  /* ==============================
+     Reset & Base Styles
+  ============================== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* ==============================
+     Body & Background
+  ============================== */
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e0f3f, #2d1463, #4b2a69);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  /* ==============================
+     Shooting Stars Animation
+  ============================== */
+  .shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(-45deg, transparent, rgba(255,255,255,0.8), transparent);
+    opacity: 0;
+    animation: shooting-star 5s linear infinite;
+  }
+  
+  .shooting-star:nth-child(1) {
+    top: 10%;
+    left: 80%;
+    animation-delay: 0s;
+  }
+  .shooting-star:nth-child(2) {
+    top: 20%;
+    left: 60%;
+    animation-delay: 2s;
+  }
+  .shooting-star:nth-child(3) {
+    top: 30%;
+    left: 90%;
+    animation-delay: 4s;
+  }
+  .shooting-star:nth-child(4) {
+    top: 40%;
+    left: 50%;
+    animation-delay: 1s;
+  }
+  .shooting-star:nth-child(5) {
+    top: 50%;
+    left: 70%;
+    animation-delay: 3s;
+  }
+  
+  @keyframes shooting-star {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) rotate(45deg);
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-100vw, 100vh) rotate(45deg);
+    }
+  }
+  
+  /* ==============================
+     Container
+  ============================== */
+  .container {
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* ==============================
+     Card Styling (Modern Neon Cards)
+  ============================== */
+  .card {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .card:hover {
+    transform: scale(1.02);
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  /* ==============================
+     Text Styling
+  ============================== */
+  .subject-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #ff00ff; /* Neon Pink */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  }
+  
+  .countdown {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2em;
+    font-weight: 600;
+    color: #00ffff; /* Neon Cyan */
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+  }
+  
+  /* ==============================
+     Progress Bar Styling
+  ============================== */
+  .progress {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .progress-bar {
+    background: linear-gradient(45deg, #00f5ff, #ff00ff);
+    box-shadow: 0 0 10px #ff00ff;
+    font-weight: 600;
+  }
+  
+  /* ==============================
+     Grade Section Styling
+  ============================== */
+  .grade-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 3px solid #ff00ff;
+    border-radius: 5px;
+  }
+  
+  .grade-section h5 {
+    margin-bottom: 10px;
+    color: #ffcc00;
+    text-shadow: 0 0 3px rgba(255, 204, 0, 0.8);
+  }
+  
+  /* ==============================
+     Custom Checkbox Styling
+  ============================== */
+  .unit-checkbox {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #00f5ff;
+    border-radius: 5px;
+    margin-right: 10px;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.2s, transform 0.2s;
+    position: relative;
+  }
+  
+  .unit-checkbox:checked {
+    background-color: #00f5ff;
+    transform: scale(1.1);
+  }
+  
+  .unit-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  /* Labels for Checkboxes */
+  .grade-section label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .grade-section label:hover {
+    color: #ffffff;
+  }
+  
+  </style>
+</body>
+</html>

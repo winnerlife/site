@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exam Study Tracker - Subjects</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <!-- Shooting Stars -->
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+
+  <div class="container">
+    <h2 class="text-center my-4">Subjects Overview</h2>
+    <div id="subjectsContainer"></div>
+    <div class="text-center mt-4">
+      <a href="index.html" class="btn btn-secondary">Home</a>
+    </div>
+  </div>
+<style>
+    /* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body: Neon Purple-Blue Gradient Background */
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #1e0f3f, #2d1463, #4b2a69);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Shooting Stars */
+/* (For best effect, add several elements like below in your HTML body:)
+     <div class="shooting-star"></div>
+     <div class="shooting-star"></div>
+     <div class="shooting-star"></div>
+     ...  */
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(-45deg, transparent, rgba(255,255,255,0.8), transparent);
+  opacity: 0;
+  animation: shooting-star 5s linear infinite;
+}
+
+/* Different positions & delays for variety */
+.shooting-star:nth-child(1) {
+  top: 10%;
+  left: 80%;
+  animation-delay: 0s;
+}
+.shooting-star:nth-child(2) {
+  top: 20%;
+  left: 60%;
+  animation-delay: 2s;
+}
+.shooting-star:nth-child(3) {
+  top: 30%;
+  left: 90%;
+  animation-delay: 4s;
+}
+.shooting-star:nth-child(4) {
+  top: 40%;
+  left: 50%;
+  animation-delay: 1s;
+}
+.shooting-star:nth-child(5) {
+  top: 50%;
+  left: 70%;
+  animation-delay: 3s;
+}
+
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-100vw, 100vh) rotate(45deg);
+  }
+}
+
+/* Container: Ensures content stays on top of the animated background */
+.container {
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Card Styling: Modern, Semi-transparent Neon Cards */
+.card {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Subject Title: Neon Glow */
+.subject-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ff00ff; /* Neon Pink */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+/* Progress Bars: Modern Neon Gradient */
+.progress {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  background: linear-gradient(45deg, #00f5ff, #ff00ff);
+  box-shadow: 0 0 10px #ff00ff;
+  font-weight: bold;
+}
+
+/* Countdown Timer: Bold Neon Cyan */
+.countdown {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: bold;
+  color: #00ffff; /* Neon Cyan */
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+}
+
+/* Grade Section: Stylish Divisions for Each Grade */
+.grade-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #ff00ff;
+  border-radius: 5px;
+}
+
+.grade-section h5 {
+  margin-bottom: 10px;
+  color: #ffcc00;
+  text-shadow: 0 0 3px rgba(255, 204, 0, 0.8);
+}
+
+/* Checkboxes & Labels */
+.unit-checkbox {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  accent-color: #00f5ff; /* For modern browsers */
+}
+
+.grade-section label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+</style>
+  <script>
+    const subjects = ["Physics", "Maths", "Biology", "Chemistry"];
+    const grades = ["9", "10", "11", "12"];
+    const unitsPerGrade = 8;
+
+    // Initialize study progress if needed.
+    function initStudyProgress() {
+      if (!localStorage.getItem('studyProgress')) {
+        let progress = {};
+        subjects.forEach(subject => {
+          progress[subject] = {};
+          grades.forEach(grade => {
+            progress[subject][grade] = new Array(unitsPerGrade).fill(false);
+          });
+        });
+        localStorage.setItem('studyProgress', JSON.stringify(progress));
+      }
+    }
+    
+    function getStudyProgress() {
+      return JSON.parse(localStorage.getItem('studyProgress'));
+    }
+    
+    // Calculate progress for a single subject.
+    function calculateSubjectProgress(subject) {
+      const progress = getStudyProgress();
+      let total = 0, completed = 0;
+      grades.forEach(grade => {
+        progress[subject][grade].forEach(unitDone => {
+          total++;
+          if(unitDone) completed++;
+        });
+      });
+      return (completed / total) * 100;
+    }
+    
+    // Create a clickable card for a subject.
+    function createSubjectCard(subject) {
+      const card = document.createElement('div');
+      card.className = "card mb-3";
+      card.style.cursor = "pointer";
+      card.addEventListener('click', function() {
+        window.location.href = "subject.html?subject=" + encodeURIComponent(subject);
+      });
+      
+      const cardBody = document.createElement('div');
+      cardBody.className = "card-body";
+      
+      const title = document.createElement('h4');
+      title.className = "card-title subject-title";
+      title.textContent = subject;
+      cardBody.appendChild(title);
+      
+      // Subject Progress Bar
+      const progressDiv = document.createElement('div');
+      progressDiv.className = "progress mb-3";
+      const progressBar = document.createElement('div');
+      progressBar.className = "progress-bar";
+      progressBar.id = subject + "ProgressBar";
+      progressBar.setAttribute("role", "progressbar");
+      progressBar.style.width = "0%";
+      progressBar.textContent = "0%";
+      progressDiv.appendChild(progressBar);
+      cardBody.appendChild(progressDiv);
+      
+      card.appendChild(cardBody);
+      return card;
+    }
+    
+    // Render all subject cards.
+    function renderSubjects() {
+      const subjectsContainer = document.getElementById('subjectsContainer');
+      subjectsContainer.innerHTML = "";
+      subjects.forEach(subject => {
+        const card = createSubjectCard(subject);
+        subjectsContainer.appendChild(card);
+        updateSubjectProgress(subject);
+      });
+    }
+    
+    // Update an individual subject's progress bar.
+    function updateSubjectProgress(subject) {
+      const progress = calculateSubjectProgress(subject);
+      const progressBar = document.getElementById(subject + "ProgressBar");
+      progressBar.style.width = progress.toFixed(1) + "%";
+      progressBar.innerHTML = progress.toFixed(1) + "%";
+    }
+    
+    initStudyProgress();
+    renderSubjects();
+  </script>
+</body>
+</html>

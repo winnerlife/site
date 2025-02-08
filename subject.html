@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exam Study Tracker - Subject Details</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <!-- Shooting Stars -->
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  
+  <div class="container">
+    <div id="subjectContent"></div>
+    <div class="text-center mt-4">
+      <a href="study.html" class="btn btn-secondary">Back to Subjects</a>
+    </div>
+  </div>
+  <style>
+    /* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body: Neon Purple-Blue Gradient Background */
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #1e0f3f, #2d1463, #4b2a69);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Shooting Stars */
+/* (For best effect, add several elements like below in your HTML body:)
+     <div class="shooting-star"></div>
+     <div class="shooting-star"></div>
+     <div class="shooting-star"></div>
+     ...  */
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(-45deg, transparent, rgba(255,255,255,0.8), transparent);
+  opacity: 0;
+  animation: shooting-star 5s linear infinite;
+}
+
+/* Different positions & delays for variety */
+.shooting-star:nth-child(1) {
+  top: 10%;
+  left: 80%;
+  animation-delay: 0s;
+}
+.shooting-star:nth-child(2) {
+  top: 20%;
+  left: 60%;
+  animation-delay: 2s;
+}
+.shooting-star:nth-child(3) {
+  top: 30%;
+  left: 90%;
+  animation-delay: 4s;
+}
+.shooting-star:nth-child(4) {
+  top: 40%;
+  left: 50%;
+  animation-delay: 1s;
+}
+.shooting-star:nth-child(5) {
+  top: 50%;
+  left: 70%;
+  animation-delay: 3s;
+}
+
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-100vw, 100vh) rotate(45deg);
+  }
+}
+
+/* Container: Ensures content stays on top of the animated background */
+.container {
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Card Styling: Modern, Semi-transparent Neon Cards */
+.card {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Subject Title: Neon Glow */
+.subject-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ff00ff; /* Neon Pink */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+/* Progress Bars: Modern Neon Gradient */
+.progress {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  background: linear-gradient(45deg, #00f5ff, #ff00ff);
+  box-shadow: 0 0 10px #ff00ff;
+  font-weight: bold;
+}
+
+/* Countdown Timer: Bold Neon Cyan */
+.countdown {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: bold;
+  color: #00ffff; /* Neon Cyan */
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+}
+
+/* Grade Section: Stylish Divisions for Each Grade */
+.grade-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #ff00ff;
+  border-radius: 5px;
+}
+
+.grade-section h5 {
+  margin-bottom: 10px;
+  color: #ffcc00;
+  text-shadow: 0 0 3px rgba(255, 204, 0, 0.8);
+}
+
+/* Checkboxes & Labels */
+.unit-checkbox {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  accent-color: #00f5ff; /* For modern browsers */
+}
+
+.grade-section label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+</style>
+<style>
+  /* Import the Poppins font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* ==============================
+   Reset & Base Styles
+============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==============================
+   Body & Background
+============================== */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #1e0f3f, #2d1463, #4b2a69);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ==============================
+   Shooting Stars Animation
+============================== */
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(-45deg, transparent, rgba(255,255,255,0.8), transparent);
+  opacity: 0;
+  animation: shooting-star 5s linear infinite;
+}
+
+.shooting-star:nth-child(1) {
+  top: 10%;
+  left: 80%;
+  animation-delay: 0s;
+}
+.shooting-star:nth-child(2) {
+  top: 20%;
+  left: 60%;
+  animation-delay: 2s;
+}
+.shooting-star:nth-child(3) {
+  top: 30%;
+  left: 90%;
+  animation-delay: 4s;
+}
+.shooting-star:nth-child(4) {
+  top: 40%;
+  left: 50%;
+  animation-delay: 1s;
+}
+.shooting-star:nth-child(5) {
+  top: 50%;
+  left: 70%;
+  animation-delay: 3s;
+}
+
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-100vw, 100vh) rotate(45deg);
+  }
+}
+
+/* ==============================
+   Container
+============================== */
+.container {
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==============================
+   Card Styling (Modern Neon Cards)
+============================== */
+.card {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* ==============================
+   Text Styling
+============================== */
+.subject-title {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #ff00ff; /* Neon Pink */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+.countdown {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 600;
+  color: #00ffff; /* Neon Cyan */
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+}
+
+/* ==============================
+   Progress Bar Styling
+============================== */
+.progress {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  background: linear-gradient(45deg, #00f5ff, #ff00ff);
+  box-shadow: 0 0 10px #ff00ff;
+  font-weight: 600;
+}
+
+/* ==============================
+   Grade Section Styling
+============================== */
+.grade-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #ff00ff;
+  border-radius: 5px;
+}
+
+.grade-section h5 {
+  margin-bottom: 10px;
+  color: #ffcc00;
+  text-shadow: 0 0 3px rgba(255, 204, 0, 0.8);
+}
+
+/* ==============================
+   Custom Checkbox Styling
+============================== */
+.unit-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #00f5ff;
+  border-radius: 5px;
+  margin-right: 10px;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: transparent;
+  transition: background-color 0.2s, transform 0.2s;
+  position: relative;
+}
+
+.unit-checkbox:checked {
+  background-color: #00f5ff;
+  transform: scale(1.1);
+}
+
+.unit-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Labels for Checkboxes */
+.grade-section label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.grade-section label:hover {
+  color: #ffffff;
+}
+
+</style>
+  <script>
+    const subjects = ["Physics", "Maths", "Biology", "Chemistry"];
+    const grades = ["9", "10", "11", "12"];
+    const unitsPerGrade = 8;
+    
+    // Initialize study progress if needed.
+    function initStudyProgress() {
+      if (!localStorage.getItem('studyProgress')) {
+        let progress = {};
+        subjects.forEach(subject => {
+          progress[subject] = {};
+          grades.forEach(grade => {
+            progress[subject][grade] = new Array(unitsPerGrade).fill(false);
+          });
+        });
+        localStorage.setItem('studyProgress', JSON.stringify(progress));
+      }
+    }
+    
+    function getStudyProgress() {
+      return JSON.parse(localStorage.getItem('studyProgress'));
+    }
+    
+    function saveStudyProgress(data) {
+      localStorage.setItem('studyProgress', JSON.stringify(data));
+    }
+    
+    // Calculate progress for a single subject.
+    function calculateSubjectProgress(subject, progressData) {
+      let total = 0, completed = 0;
+      grades.forEach(grade => {
+        progressData[subject][grade].forEach(unitDone => {
+          total++;
+          if(unitDone) completed++;
+        });
+      });
+      return (completed / total) * 100;
+    }
+    
+    // Update the subject’s progress bar display.
+    function updateSubjectProgressDisplay(subject, progressData) {
+      const progressBar = document.getElementById('subjectProgressBar');
+      const progress = calculateSubjectProgress(subject, progressData);
+      progressBar.style.width = progress.toFixed(1) + "%";
+      progressBar.innerHTML = progress.toFixed(1) + "%";
+    }
+    
+    // Helper: Get query parameter by name.
+    function getQueryParameter(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+    
+    // Build the detailed view for a subject.
+    function createSubjectDetail(subject) {
+      const container = document.createElement('div');
+      
+      // Subject Title
+      const title = document.createElement('h2');
+      title.className = "subject-title text-center my-4";
+      title.textContent = subject;
+      container.appendChild(title);
+      
+      // Subject Progress Bar Card
+      const progressCard = document.createElement('div');
+      progressCard.className = "card mb-4";
+      const progressCardBody = document.createElement('div');
+      progressCardBody.className = "card-body";
+      const progressTitle = document.createElement('h4');
+      progressTitle.className = "card-title";
+      progressTitle.textContent = "Progress";
+      progressCardBody.appendChild(progressTitle);
+      const progressDiv = document.createElement('div');
+      progressDiv.className = "progress";
+      const progressBar = document.createElement('div');
+      progressBar.className = "progress-bar";
+      progressBar.id = "subjectProgressBar";
+      progressBar.setAttribute("role", "progressbar");
+      progressBar.style.width = "0%";
+      progressBar.textContent = "0%";
+      progressDiv.appendChild(progressBar);
+      progressCardBody.appendChild(progressDiv);
+      progressCard.appendChild(progressCardBody);
+      container.appendChild(progressCard);
+      
+      // Build sections for each Grade (9 to 12)
+      const studyProgress = getStudyProgress();
+      
+      grades.forEach(grade => {
+        const gradeSection = document.createElement('div');
+        gradeSection.className = "grade-section";
+        
+        const gradeTitle = document.createElement('h5');
+        gradeTitle.textContent = "Grade " + grade;
+        gradeSection.appendChild(gradeTitle);
+        
+        for (let unit = 1; unit <= unitsPerGrade; unit++) {
+          const checkboxId = subject + "_grade" + grade + "_unit" + unit;
+          const checkbox = document.createElement('input');
+          checkbox.type = "checkbox";
+          checkbox.className = "unit-checkbox";
+          checkbox.id = checkboxId;
+          // Store identifying info as data attributes.
+          checkbox.dataset.subject = subject;
+          checkbox.dataset.grade = grade;
+          checkbox.dataset.unit = unit - 1; // zero-indexed
+          
+          // Set checkbox state based on saved progress.
+          if (studyProgress[subject][grade][unit - 1]) {
+            checkbox.checked = true;
+          }
+          
+          // Update progress when checkbox is toggled.
+          checkbox.addEventListener('change', function() {
+            let progressData = getStudyProgress();
+            const subj = this.dataset.subject;
+            const grd = this.dataset.grade;
+            const unitIndex = parseInt(this.dataset.unit);
+            progressData[subj][grd][unitIndex] = this.checked;
+            saveStudyProgress(progressData);
+            updateSubjectProgressDisplay(subj, progressData);
+          });
+          
+          const label = document.createElement('label');
+          label.htmlFor = checkboxId;
+          label.textContent = "Unit " + unit;
+          label.style.marginRight = "15px";
+          
+          gradeSection.appendChild(checkbox);
+          gradeSection.appendChild(label);
+        }
+        
+        container.appendChild(gradeSection);
+      });
+      
+      return container;
+    }
+    
+    // --- Initialize & Render ---
+    initStudyProgress();
+    const subject = getQueryParameter('subject');
+    if (!subject || !subjects.includes(subject)) {
+      document.getElementById('subjectContent').innerHTML = "<p class='text-center'>Invalid subject.</p>";
+    } else {
+      const progressData = getStudyProgress();
+      const subjectDetail = createSubjectDetail(subject);
+      document.getElementById('subjectContent').appendChild(subjectDetail);
+      updateSubjectProgressDisplay(subject, progressData);
+    }
+  </script>
+</body>
+</html>
