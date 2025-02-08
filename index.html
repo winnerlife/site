@@ -8,298 +8,427 @@
   <link rel="stylesheet" href="styles.css">
   <!-- Optional: Bootstrap CSS for layout -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    :root {
+      --neon-purple: #bc13fe;
+      --neon-pink: #ff44cc;
+      --dark-bg: #0a0819;
+      --star: rgba(255, 255, 255, 0.8);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+    body {
+      background: var(--dark-bg);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .stars {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      animation: shooting 3s linear infinite;
+    }
+    @keyframes shooting {
+      0% { transform: translate(-100%, -100%); opacity: 1; }
+      100% { transform: translate(100vw, 100vh); opacity: 0; }
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+    }
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      position: relative;
+      background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(188, 19, 254, 0.5);
+    }
+    /* Horizontal overall progress container (for filtered grades) */
+    .total-progress {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1.5rem;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      margin: 2rem 0;
+      border: 1px solid var(--neon-purple);
+      box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+    }
+    .progress-container {
+      height: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+      width: 0;
+      transition: width 0.5s ease;
+      position: relative;
+    }
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2));
+    }
+    .countdown {
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      margin: 1rem 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .subject-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 15px;
+      border: 1px solid var(--neon-purple);
+      transition: transform 0.3s, box-shadow 0.3s;
+      backdrop-filter: blur(5px);
+      overflow: hidden;
+    }
+    .subject-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(188, 19, 254, 0.4);
+    }
+    .controls button {
+      background: none;
+      border: 1px solid var(--neon-purple);
+      color: var(--neon-purple);
+      margin: 0 5px;
+      transition: all 0.3s;
+    }
+    .controls button:hover {
+      background: var(--neon-purple);
+      color: white;
+      box-shadow: 0 0 15px var(--neon-purple);
+    }
+    .grade-selector button {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid var(--neon-purple);
+      margin: 0 5px;
+    }
+    .active-grade {
+      background: var(--neon-purple) !important;
+      color: white !important;
+    }
+    /* Circular overall progress indicator (for "All") */
+    #circular-progress-container {
+      display: none;
+      margin: 2rem auto;
+      width: 200px;
+      height: 200px;
+    }
+    #circular-progress-container svg {
+      width: 100%;
+      height: 100%;
+    }
+    /* Global confetti container (fills the whole screen) */
+    #global-confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+    /* Confetti pieces – basic style; their movement is controlled via JavaScript */
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      will-change: transform;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <!-- Shooting Stars -->
-  <div class="shooting-star"></div>
-  <div class="shooting-star"></div>
-  <div class="shooting-star"></div>
-  <div class="shooting-star"></div>
-  <div class="shooting-star"></div>
+  <div class="stars" id="stars"></div>
 
-  <div class="container">
-    <!-- User Profile Header -->
-    <div class="user-profile d-flex justify-content-end align-items-center my-3">
-      <img src="" alt="Profile Image" id="profileImage" class="rounded-circle" style="width:50px; height:50px; margin-right:10px;">
-      <span id="usernameDisplay" class="font-weight-bold"></span>
+  <header>
+    <h1>🌌 Cosmic Study Tracker</h1>
+    <div class="countdown" id="countdown-timer"></div>
+  </header>
+
+  <!-- Horizontal Overall Progress (for filtered grades) -->
+  <div class="total-progress">
+    <h2>Total Progress</h2>
+    <div class="progress-container">
+      <div class="progress-bar" id="total-progress"></div>
     </div>
-
-    <!-- Countdown Timer -->
-    <div class="countdown" id="countdown"></div>
-
-    <!-- Overall Progress Section -->
-    <div class="card my-4">
-      <div class="card-body">
-        <h4 class="card-title">Overall Progress</h4>
-        <div class="progress">
-          <div class="progress-bar" id="overallProgressBar" role="progressbar" 
-               style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            0%
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Button to navigate to the subjects page -->
-    <div class="text-center">
-      <a href="study.html" class="btn btn-lg btn-primary">Study Time</a>
-    </div>
+    <p id="total-percent">0% Completed</p>
   </div>
 
+  <!-- Grade selector buttons -->
+  <div class="grade-selector">
+    <!-- Pass the event to know which button was clicked -->
+    <button class="active-grade" onclick="filterSubjects('all', event)">All</button>
+    <button onclick="filterSubjects(9, event)">Grade 9</button>
+    <button onclick="filterSubjects(10, event)">Grade 10</button>
+    <button onclick="filterSubjects(11, event)">Grade 11</button>
+    <button onclick="filterSubjects(12, event)">Grade 12</button>
+  </div>
+
+  <!-- Circular Overall Progress (shown only when "All" is active) -->
+  <div id="circular-progress-container">
+    <svg width="200" height="200">
+      <!-- Background circle -->
+      <circle cx="100" cy="100" r="90" stroke="rgba(255,255,255,0.1)" stroke-width="15" fill="none" />
+      <!-- Progress circle -->
+      <circle id="circular-progress-bar" cx="100" cy="100" r="90" stroke="var(--neon-purple)" stroke-width="15" fill="none"
+        stroke-dasharray="565.48" stroke-dashoffset="565.48"
+        style="transform: rotate(-90deg); transform-origin: 50% 50%;" />
+      <!-- Percentage text -->
+      <text id="circular-progress-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="2em">
+        0%
+      </text>
+    </svg>
+  </div>
+
+  <!-- Subject Cards Grid (hidden when "All" is active) -->
+  <div class="grid" id="subject-grid"></div>
+
   <script>
-    // --- Load User Data ---
-    const user = JSON.parse(localStorage.getItem('user'));
-    if(user && user.name) {
-      document.getElementById('usernameDisplay').textContent = user.name;
-      document.getElementById('profileImage').src = user.profileImage || "10337609.png";
-    } else {
-      // If no user is logged in, redirect to the login page.
-      window.location.href = "login.html";
-    }
-
-    // --- Shared Variables & Functions ---
-    const subjects = ["Physics", "Maths", "Biology", "Chemistry"];
-    const grades = ["9", "10", "11", "12"];
-    const unitsPerGrade = 8;
-
-    // Initialize studyProgress in localStorage if not already set.
-    function initStudyProgress() {
-      if (!localStorage.getItem('studyProgress')) {
-        let progress = {};
-        subjects.forEach(subject => {
-          progress[subject] = {};
-          grades.forEach(grade => {
-            progress[subject][grade] = new Array(unitsPerGrade).fill(false);
-          });
-        });
-        localStorage.setItem('studyProgress', JSON.stringify(progress));
+    // Shooting stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
       }
     }
+    createStars();
 
-    function getStudyProgress() {
-      return JSON.parse(localStorage.getItem('studyProgress'));
-    }
-
-    // Calculate overall progress across all subjects/grades.
-    function calculateOverallProgress() {
-      const progress = getStudyProgress();
-      let total = 0, completed = 0;
-      subjects.forEach(subject => {
-        grades.forEach(grade => {
-          progress[subject][grade].forEach(unitDone => {
-            total++;
-            if(unitDone) completed++;
-          });
-        });
-      });
-      return (completed / total) * 100;
-    }
-
-    // Update the overall progress bar.
-    function updateOverallProgress() {
-      const overallProgress = calculateOverallProgress();
-      const overallProgressBar = document.getElementById('overallProgressBar');
-      overallProgressBar.style.width = overallProgress.toFixed(1) + "%";
-      overallProgressBar.innerHTML = overallProgress.toFixed(1) + "%";
-    }
-
-    // --- Countdown Timer Functions ---
-    function getExamDate() {
-      const now = new Date();
-      let examYear = now.getFullYear();
-      // JavaScript months are 0-indexed: 6 means July.
-      const examDateThisYear = new Date(examYear, 6, 1);
-      if (now > examDateThisYear) {
-        examYear++;
-      }
-      return new Date(examYear, 6, 1);
-    }
-    
+    // Countdown Timer
+    const examDate = new Date('2024-07-01').getTime();
+    const countdownElement = document.getElementById('countdown-timer');
     function updateCountdown() {
-      const now = new Date();
-      const examDate = getExamDate();
+      const now = new Date().getTime();
       const diff = examDate - now;
-      if (diff <= 0) {
-        document.getElementById('countdown').innerHTML = "Exam Day!";
-        clearInterval(countdownInterval);
-        return;
-      }
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      document.getElementById('countdown').innerHTML = 
-        "Time until exam: " + days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      countdownElement.innerHTML = `⏳ ${days}d ${hours}h ${minutes}m until exam`;
     }
-    
-    // --- Initialize & Start ---
-    initStudyProgress();
-    updateOverallProgress();
+    setInterval(updateCountdown, 1000);
     updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
+
+    // Global variable for current filter
+    let currentFilter = 'all';
+
+    // Subjects Data (Grades 9-12)
+    // Each subject now also has a "celebrated" flag.
+    const subjects = Array.from({ length: 4 }, (_, grade) => 9 + grade).flatMap(grade =>
+      ['Physics', 'Maths', 'Biology', 'Chemistry'].map(subject => ({
+        name: subject,
+        grade,
+        progress: 0,
+        units: 8,
+        celebrated: false
+      }))
+    );
+
+    // Update overall (or filtered) progress
+    function updateTotalProgress() {
+      const relevantSubjects =
+        currentFilter === 'all'
+          ? subjects
+          : subjects.filter(sub => sub.grade === currentFilter);
+      const total = relevantSubjects.reduce((sum, sub) => sum + sub.progress, 0);
+      const average = relevantSubjects.length ? total / relevantSubjects.length : 0;
+
+      if (currentFilter === 'all') {
+        // Update the circular progress indicator
+        const circle = document.getElementById('circular-progress-bar');
+        const text = document.getElementById('circular-progress-text');
+        const radius = circle.r.baseVal.value; // 90
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference * (1 - average / 100);
+        circle.style.strokeDasharray = `${circumference}`;
+        circle.style.strokeDashoffset = offset;
+        text.textContent = `${average.toFixed(1)}%`;
+      } else {
+        // Update the horizontal progress bar
+        document.getElementById('total-progress').style.width = average + '%';
+        document.getElementById('total-percent').textContent =
+          `${average.toFixed(1)}% Completed`;
+      }
+    }
+
+    // Global celebration explosion that fills the whole screen with confetti
+    function triggerGlobalCelebration() {
+      // Create a container that covers the viewport
+      const container = document.createElement('div');
+      container.id = 'global-confetti-container';
+      document.body.appendChild(container);
+
+      const particles = [];
+      const numParticles = 100;
+      // Use the center of the viewport as the explosion origin
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      for (let i = 0; i < numParticles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'confetti-piece';
+        particle.style.backgroundColor = getRandomColor();
+        container.appendChild(particle);
+
+        // Randomize the angle and speed for the explosion
+        const angle = Math.random() * 2 * Math.PI;
+        const speed = Math.random() * 6 + 2;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
+        particles.push({
+          element: particle,
+          x: centerX,
+          y: centerY,
+          vx: vx,
+          vy: vy,
+          rotation: Math.random() * 360,
+          rotationSpeed: Math.random() * 10 - 5,
+        });
+      }
+
+      // Simple physics parameters
+      const gravity = 0.3; // acceleration downward
+      const friction = 0.99; // simulate air resistance
+
+      function animate() {
+        particles.forEach(p => {
+          p.vy += gravity;  // apply gravitational acceleration
+          p.vx *= friction;
+          p.vy *= friction;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.rotationSpeed;
+          p.element.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.rotation}deg)`;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // Remove the confetti after 4 seconds
+      setTimeout(() => {
+        container.remove();
+      }, 4000);
+    }
+
+    function getRandomColor() {
+      const colors = ['#ff44cc', '#bc13fe', '#ffeb3b', '#4caf50', '#2196f3'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    // Update progress for an individual subject (for the grid view)
+    function updateProgress(button, amount) {
+      const card = button.closest('.subject-card');
+      const index = card.dataset.index;
+      subjects[index].progress = Math.max(0, Math.min(100, subjects[index].progress + amount));
+      
+      // Update the subject's progress display in its card:
+      const progressBar = card.querySelector('.progress-bar');
+      progressBar.style.width = subjects[index].progress + '%';
+      card.querySelector('p').textContent =
+        `${subjects[index].progress.toFixed(1)}% Completed`;
+
+      // If the subject reaches 100% and hasn't been celebrated yet, trigger the global explosion:
+      if (subjects[index].progress === 100 && !subjects[index].celebrated) {
+        subjects[index].celebrated = true;
+        triggerGlobalCelebration();
+      } else if (subjects[index].progress < 100) {
+        subjects[index].celebrated = false;
+      }
+
+      updateTotalProgress();
+    }
+
+    // Create subject cards (only used when a specific grade is selected)
+    function createSubjectCards(filterGrade = 'all') {
+      const grid = document.getElementById('subject-grid');
+      grid.innerHTML = '';
+
+      subjects.forEach((subject, index) => {
+        if (filterGrade !== 'all' && subject.grade !== filterGrade) return;
+
+        const card = document.createElement('div');
+        card.className = 'subject-card';
+        // Store the original index so we can update the correct subject later:
+        card.dataset.index = index;
+
+        card.innerHTML = `
+          <h3>🌟 ${subject.name} - Grade ${subject.grade}</h3>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: ${subject.progress}%"></div>
+          </div>
+          <p>${subject.progress.toFixed(1)}% Completed</p>
+          <div class="controls">
+            <button onclick="updateProgress(this, 12.5)">+ Unit</button>
+            <button onclick="updateProgress(this, -12.5)">- Unit</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Filter subjects based on grade and update the view and overall progress
+    function filterSubjects(grade, event) {
+      currentFilter = grade;
+      document.querySelectorAll('.grade-selector button').forEach(btn =>
+        btn.classList.remove('active-grade')
+      );
+      event.target.classList.add('active-grade');
+
+      if (grade === 'all') {
+        // For "All", hide the horizontal progress and subject grid; show the circular indicator.
+        document.querySelector('.total-progress').style.display = 'none';
+        document.getElementById('subject-grid').style.display = 'none';
+        document.getElementById('circular-progress-container').style.display = 'block';
+      } else {
+        // For a specific grade, show the horizontal progress and grid; hide the circular indicator.
+        document.querySelector('.total-progress').style.display = 'block';
+        document.getElementById('subject-grid').style.display = 'grid';
+        document.getElementById('circular-progress-container').style.display = 'none';
+        createSubjectCards(grade);
+      }
+      updateTotalProgress();
+    }
+
+    // Initial load: default to "All"
+    filterSubjects('all', { target: document.querySelector('.grade-selector button') });
   </script>
-
-
-  <style>
-    /* Reset & Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Body: Neon Purple-Blue Gradient Background */
-body {
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #1e0f3f, #2d1463, #4b2a69);
-  color: #fff;
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Shooting Stars */
-/* (For best effect, add several elements like below in your HTML body:)
-     <div class="shooting-star"></div>
-     <div class="shooting-star"></div>
-     <div class="shooting-star"></div>
-     ...  */
-.shooting-star {
-  position: absolute;
-  width: 2px;
-  height: 80px;
-  background: linear-gradient(-45deg, transparent, rgba(255,255,255,0.8), transparent);
-  opacity: 0;
-  animation: shooting-star 5s linear infinite;
-}
-
-/* Different positions & delays for variety */
-.shooting-star:nth-child(1) {
-  top: 10%;
-  left: 80%;
-  animation-delay: 0s;
-}
-.shooting-star:nth-child(2) {
-  top: 20%;
-  left: 60%;
-  animation-delay: 2s;
-}
-.shooting-star:nth-child(3) {
-  top: 30%;
-  left: 90%;
-  animation-delay: 4s;
-}
-.shooting-star:nth-child(4) {
-  top: 40%;
-  left: 50%;
-  animation-delay: 1s;
-}
-.shooting-star:nth-child(5) {
-  top: 50%;
-  left: 70%;
-  animation-delay: 3s;
-}
-
-@keyframes shooting-star {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) rotate(45deg);
-  }
-  10% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-100vw, 100vh) rotate(45deg);
-  }
-}
-
-/* Container: Ensures content stays on top of the animated background */
-.container {
-  padding: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Card Styling: Modern, Semi-transparent Neon Cards */
-.card {
-  background: rgba(0, 0, 0, 0.5);
-  border: none;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-  transition: transform 0.3s ease-in-out;
-}
-
-.card:hover {
-  transform: scale(1.02);
-}
-
-.card-body {
-  padding: 20px;
-}
-
-/* Subject Title: Neon Glow */
-.subject-title {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #ff00ff; /* Neon Pink */
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
-}
-
-/* Progress Bars: Modern Neon Gradient */
-.progress {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  overflow: hidden;
-  height: 20px;
-  margin-bottom: 20px;
-}
-
-.progress-bar {
-  background: linear-gradient(45deg, #00f5ff, #ff00ff);
-  box-shadow: 0 0 10px #ff00ff;
-  font-weight: bold;
-}
-
-/* Countdown Timer: Bold Neon Cyan */
-.countdown {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 2em;
-  font-weight: bold;
-  color: #00ffff; /* Neon Cyan */
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
-}
-
-/* Grade Section: Stylish Divisions for Each Grade */
-.grade-section {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.3);
-  border-left: 3px solid #ff00ff;
-  border-radius: 5px;
-}
-
-.grade-section h5 {
-  margin-bottom: 10px;
-  color: #ffcc00;
-  text-shadow: 0 0 3px rgba(255, 204, 0, 0.8);
-}
-
-/* Checkboxes & Labels */
-.unit-checkbox {
-  margin-right: 5px;
-  margin-bottom: 5px;
-  accent-color: #00f5ff; /* For modern browsers */
-}
-
-.grade-section label {
-  margin-right: 15px;
-  cursor: pointer;
-}
-
-</style>
 </body>
 </html>
